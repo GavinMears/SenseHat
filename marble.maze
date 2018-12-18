@@ -1,0 +1,132 @@
+from sense_hat import SenseHat
+sense = SenseHat()
+sense.clear()
+from time import sleep
+
+r = (255,0,0)
+b = (0,0,0)
+x = 1
+y = 1
+w = (255,255,255)
+g = (255,255,0)
+p = (255,0,255)
+c = (0,255,255)
+e = (0,255,0)
+z = (123,0,24)
+a = (123,34,56)
+k = (65,89,124)
+u = (99,99,99)
+maze = [[r,r,r,r,r,r,r,r],
+        [r,b,b,b,b,b,b,r],
+        [r,r,r,b,r,w,b,r],
+        [r,w,r,b,r,r,r,r],
+        [r,b,b,b,b,b,b,r],
+        [r,b,r,r,r,r,b,r],
+        [r,p,r,r,w,b,b,r],
+        [r,r,r,r,r,r,r,r]]
+
+def move_marble(pitch, roll, x, y):
+    new_x = x
+    new_y = y
+    if 1 < pitch < 179 and x != 0:
+        new_x -= 1
+    elif 359 > pitch > 181 and x != 7:
+        new_x += 1
+    if 1 < roll < 179 and y != 7:
+        new_y += 1
+    elif 359 > roll > 179 and y != 0:
+        new_y -= 1
+    new_x, new_y = check_wall(x,y,new_x,new_y)
+    return new_x, new_y
+
+game_over = False
+
+def check_wall(x,y,new_x,new_y):
+    if maze[new_y][new_x] != r:
+        return new_x, new_y
+    elif maze[new_y][x] != r:
+        return x, new_y
+    elif maze[y][new_x] != r:
+        return new_x, y
+    else:
+        return x,y
+            
+
+while game_over == False:
+    o = sense.get_orientation()
+    pitch = o["pitch"]
+    roll = o["roll"]
+    x,y = move_marble(pitch,roll,x,y)
+    if maze[y][x] == w:
+        sense.show_message("you loose")
+        #game_over = True
+    if maze[y][x] == p:
+        maze = [[r,r,r,r,r,r,r,r],
+                [r,b,r,b,b,b,b,r],
+                [r,b,b,b,r,c,b,r],
+                [r,b,r,b,r,r,r,r],
+                [r,b,r,b,b,b,b,r],
+                [r,b,r,r,r,r,b,r],
+                [r,p,r,r,w,b,b,r],
+                [r,r,r,r,r,r,r,r]]
+        #game_over = True
+    if maze[y][x] == c:
+        maze = [[b,b,b,b,r,b,b,w],
+                [b,r,r,b,r,b,r,r],
+                [b,r,b,b,b,c,b,b],
+                [b,r,b,w,r,b,r,b],
+                [b,r,b,b,b,b,b,w],
+                [b,w,b,r,b,r,r,r],
+                [b,r,w,r,b,b,b,r],
+                [b,b,b,b,b,r,e,r]]
+    if maze[y][x] == e:
+         maze = [[b,r,z,b,b,b,b,r],
+                 [b,r,r,r,r,r,b,w],
+                 [b,r,b,w,b,r,b,r],
+                 [b,b,b,b,b,b,b,r],
+                 [w,b,r,r,b,r,r,r],
+                 [r,b,b,r,b,b,b,r],
+                 [w,r,b,r,r,r,b,r],
+                 [b,b,b,b,r,r,e,r]]
+    if maze[y][x] == z:
+         maze = [[b,b,z,b,b,b,b,b],
+                 [w,w,b,w,w,w,w,b],
+                 [w,w,b,w,w,w,w,b],
+                 [w,w,b,w,w,w,w,b],
+                 [w,w,b,w,w,w,w,b],
+                 [w,w,b,w,w,w,w,b],
+                 [w,w,b,w,w,w,w,b],
+                 [w,w,b,b,b,a,b,b]]
+    if maze[y][x] == a:
+        maze = [[k,b,b,b,b,b,b,r],
+                 [r,r,r,r,r,r,b,r],
+                 [b,b,b,b,b,r,b,r],
+                 [b,r,r,r,r,r,b,r],
+                 [b,r,b,b,b,b,r,r],
+                 [b,b,b,r,b,r,b,r],
+                 [r,r,r,w,r,r,b,r],
+                 [r,b,b,b,b,b,b,r]]
+    if maze[y][x] == k:
+        maze = [[b,r,b,r,b,r,b,r],
+                 [r,b,r,b,r,b,r,b],
+                 [b,r,b,r,b,r,b,r],
+                 [r,b,r,b,r,b,r,b],
+                 [b,r,b,r,b,r,b,r],
+                 [r,b,r,b,r,b,r,b],
+                 [b,r,b,r,b,r,b,r],
+                 [r,b,u,b,r,b,r,b]]
+    if maze[y][x] == u:
+        sense.show_message("you win!")
+        game_over = True
+    maze[y][x] = w
+    sense.set_pixels(sum(maze,[]))
+    sleep(0.05)
+    maze[y][x] = b
+
+print("pitch {0} roll {1} yaw {2}".format(pitch, roll, yaw))
+
+
+
+
+
+
